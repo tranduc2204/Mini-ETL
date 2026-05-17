@@ -1,7 +1,8 @@
 import pandas as pd
-from db import engine
+from scripts.db import engine
 
 def get_watermark ():
+    
 
     query = """
         SELECT last_watermark
@@ -13,5 +14,4 @@ def get_watermark ():
    
     return ( df.iloc[0]["last_watermark"])
 
-if __name__ == '__main__':
-    get_watermark()
+

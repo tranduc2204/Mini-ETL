@@ -1,7 +1,8 @@
 import pandas as pd
-from db import engine
+from scripts.db import engine 
 
 def extract_changes(old_watermark, batch_end):
+
 
     query = f"""
     SELECT *
@@ -14,3 +15,4 @@ def extract_changes(old_watermark, batch_end):
     df = pd.read_sql(query, engine)
 
     return df
+ 
