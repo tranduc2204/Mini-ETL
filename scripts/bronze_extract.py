@@ -7,8 +7,10 @@ from scripts.watermark import get_watermark
 from scripts.db import engine
 from scripts.extract import extract_changes
 
+
 def bronze_extract (**context):
 
+    # Step1 get the last watermark it mean the last time we run pipeline to extract
     old_watermark = get_watermark()
     batch_end_query = """
         SELECT MAX(changed_at) AS batch_end
@@ -19,12 +21,11 @@ def bronze_extract (**context):
         batch_end_query,
         engine
     ).iloc[0]["batch_end"]
-
-    print (batch_end)
+    print ("Old watermark: ", old_watermark)
+    print ("Batch end: ", batch_end)
     df = extract_changes(old_watermark, batch_end)
 
-    print (df)
-
+    
     if not df.empty:
 
         filename = datetime.now().strftime(
@@ -32,10 +33,7 @@ def bronze_extract (**context):
         )
 
         df.to_csv(filename, index=False)
-        print (batch_end)
-
-        print ("test")
-        # STEP 5
+        
         update_query = f"""
             UPDATE pipeline_state
             SET last_watermark = '{batch_end}'

@@ -18,7 +18,7 @@ engine = create_engine(
         f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@postgres:5432/{POSTGRES_DB}",
         connect_args={
             "options": "-csearch_path=OLTP" #   Set the search path to OLTP schema
-         }
+        }
     )
 
 

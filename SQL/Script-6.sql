@@ -118,7 +118,7 @@ from orders
 
 INSERT INTO orders (user_id, status, total_amount)
 VALUES
-(112, 'Pending',   22042002)
+(2241, 'Pending',   22042002)
 
 
 select *
@@ -148,5 +148,15 @@ from orders_cdc_log
 update pipeline_state
 
 pipeline_state
+
+CREATE TABLE processed_files (
+    file_name TEXT PRIMARY KEY,
+    processed_at TIMESTAMP
+    
+);
+
+select *
+from processed_files
+
 
 
