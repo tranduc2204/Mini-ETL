@@ -118,7 +118,7 @@ from orders
 
 INSERT INTO orders (user_id, status, total_amount)
 VALUES
-(2241, 'Pending',   22042002)
+(991, 'Pending',   22042002)
 
 
 select *
@@ -158,5 +158,7 @@ CREATE TABLE processed_files (
 select *
 from processed_files
 
+delete processed_files
+where file_name = 'data/bronze/orders_20260518082630.csv'
 
 
