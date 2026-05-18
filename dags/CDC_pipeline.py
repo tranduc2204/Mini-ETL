@@ -10,7 +10,7 @@ AIRFLOW_HOME = Path ("/opt/airflow")
 if str(AIRFLOW_HOME) not in sys.path:
     sys.path.append(str(AIRFLOW_HOME))
 
-from scripts.bronze_extract import bronze_extract
+from scripts.bronze.bronze_extract import bronze_extract
 
 
 default_args = {

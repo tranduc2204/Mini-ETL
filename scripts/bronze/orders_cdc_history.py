@@ -46,9 +46,6 @@ def list_file_exists():
         return 
     else:   
     
-       
-
-
         df_list = [pd.read_csv(file) for file in new_file]
 
 
@@ -57,7 +54,7 @@ def list_file_exists():
         df_silver_old = pd.read_csv("./data/silver/orders_silver.csv")
         df_silver_new = pd.concat([df_silver_old, df], ignore_index=True)
         df_silver_new.to_csv("./data/silver/orders_silver.csv", index=False)
-        print ("processed done")
+       
         print (df_silver_new)
 
         with engine.connect() as conn:
@@ -82,7 +79,7 @@ def list_file_exists():
                     }
                 ) 
                 conn.commit()
-
+        print ("processed done")
 
 if __name__ == "__main__":              
     list_file_exists()
