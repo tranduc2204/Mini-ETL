@@ -14,7 +14,8 @@ def bronze_extract (**context):
     pipeline_name = "orders_cdc"
 
     old_watermark = get_watermark(pipeline_name)
-
+    print (f"Old watermark check: {old_watermark}")
+  
     batch_end_query = """
         SELECT MAX(changed_at) AS batch_end
         FROM orders_cdc_log
@@ -33,7 +34,7 @@ def bronze_extract (**context):
     print(f"Batch end: {batch_end}")
 
     filename = datetime.now(timezone.utc).strftime(
-        "data/bronze/orders_%Y%m%d%H%M%S_%f.csv"
+        "./data/bronze/orders_%Y%m%d%H%M%S_%f.csv"
     )
 
     df = extract_changes(old_watermark, batch_end)
@@ -43,17 +44,18 @@ def bronze_extract (**context):
         return
 
     print(f"Extracted {len(df)} records")
-
-    filename = datetime.now(timezone.utc).strftime(
-        "data/bronze/orders_%Y%m%d%H%M%S_%f.csv"
-    )
+    
 
     df.to_csv(filename, index=False)
+    
+    
 
     update_watermark(pipeline_name, batch_end)
 
     print(f"Bronze file created: {filename}")
     print("Pipeline completed.")
+    
+    context["ti"].xcom_push(key="bronze_file", value=filename)
 
     # # Step1 get the last watermark it mean the last time we run pipeline to extract
     # old_watermark = get_watermark("orders_cdc")

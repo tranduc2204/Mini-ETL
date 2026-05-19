@@ -158,7 +158,17 @@ CREATE TABLE processed_files (
 select *
 from processed_files
 
-delete processed_files
+delete FROM  processed_files
 where file_name = 'data/bronze/orders_20260518082630.csv'
 
+
+
+select *
+from pipeline_state
+where pipeline_name = 'orders_cdc'
+
+
+delete from orders_cdc_log 
+delete from pipeline_state 
+delete from processed_files 
 

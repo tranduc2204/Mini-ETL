@@ -9,31 +9,24 @@ def get_watermark (pipeline_name: str):
     
     #orders_cdc
 
-    # query = """
-    #     SELECT last_watermark
-    #     FROM pipeline_state
-    #     where pipeline_name = 'orders_cdc'
-    # """
-
-    # df = pd.read_sql(query, engine)
-   
-    # return ( df.iloc[0]["last_watermark"])
-
     query = text("""
         SELECT last_watermark
         FROM pipeline_state
         where pipeline_name = :pipeline_name
     """)
+   
 
     with engine.connect() as conn:
         result = conn.execute(
             query, {"pipeline_name": pipeline_name}
         ).fetchone()
     
+
     if result is not None:
-        return None
-    else:
         return result[0]
+    else:
+        return None
+    
     
 def update_watermark(pipeline_name: str, new_watermark: datetime):
     query = text("""
@@ -51,3 +44,18 @@ def update_watermark(pipeline_name: str, new_watermark: datetime):
         )
 
    
+# query = """
+#     SELECT last_watermark
+#     FROM pipeline_state
+#     where pipeline_name = 'orders_cdc'
+# """
+
+# df = pd.read_sql(query, engine)
+
+# return ( df.iloc[0]["last_watermark"])
+
+if __name__ == "__main__":
+    pipeline_name = "orders_cdc"
+
+    old_watermark = get_watermark(pipeline_name)
+    print ("old_watermark: ", old_watermark)

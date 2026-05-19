@@ -10,7 +10,6 @@ def extract_changes(old_watermark, batch_end):
                 l.log_id,
                 l.operation_type,
                 l.changed_at,
-
                 o.order_id,
                 o.user_id,
                 o.status,

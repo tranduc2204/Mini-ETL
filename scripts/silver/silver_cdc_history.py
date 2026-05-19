@@ -3,28 +3,15 @@ from datetime import datetime
 import pandas  as pd 
 import glob
 import os
-# from scripts.db import engine
+from scripts.bronze.conn import engine
 
 from dotenv import load_dotenv
 import os
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
 
-load_dotenv()
 
-POSTGRES_USER  = os.getenv("POSTGRES_USER")
-POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
-POSTGRES_DB = os.getenv('POSTGRES_DB')
-POSTGRES_HOST = os.getenv('POSTGRES_HOST')
-POSTGRES_PORT = os.getenv('POSTGRES_PORT')
 
-engine = create_engine(
-    f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost:5432/{POSTGRES_DB}",
-    connect_args={
-            "options": "-csearch_path=OLTP" #   Set the search path to OLTP schema
-    }
-)
-
-def list_file_exists():
+def process_bronze_to_silver():
     # list all file in the bronze folder
     files_list = glob.glob("data/bronze/*.csv")
 
@@ -45,18 +32,37 @@ def list_file_exists():
         print ("No new file to process")
         return 
     else:   
-    
+        silver_path = "./data/silver/orders_silver.csv"
+
         df_list = [pd.read_csv(file) for file in new_file]
 
-
-        df = pd.concat(df_list, ignore_index=True)
+     
         
-        df_silver_old = pd.read_csv("./data/silver/orders_silver.csv")
-        df_silver_new = pd.concat([df_silver_old, df], ignore_index=True)
+
+        bronze_df = pd.concat(df_list, ignore_index=True)
+
+       
+        
+        
+        if os.path.exists(silver_path):
+            df_silver_old = pd.read_csv(silver_path)
+        else:
+            df_silver_old = pd.DataFrame()
+        
+        # df_silver_new = pd.concat([df_silver_old, df], ignore_index=True)
+        df_silver_new = (
+            pd.concat([df_silver_old, bronze_df], ignore_index=True)
+            .sort_values("changed_at")
+            .drop_duplicates(subset=["order_id"], keep="last")
+        )
+
         df_silver_new.to_csv("./data/silver/orders_silver.csv", index=False)
        
-        print (df_silver_new)
+       
+        print(f"Found {len(new_file)} new files")
+        print(f"Silver rows: {len(df_silver_new)}")
 
+         
         with engine.connect() as conn:
         
             for file in new_file:
@@ -82,4 +88,4 @@ def list_file_exists():
         print ("processed done")
 
 if __name__ == "__main__":              
-    list_file_exists()
+    process_bronze_to_silver()

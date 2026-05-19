@@ -1,0 +1,2 @@
+log_id,operation_type,changed_at,order_id,user_id,status,total_amount,updated_at
+10,INSERT,2026-05-19 12:00:10.850385,20,991,Pending,22042002.0,2026-05-19 12:00:10.850385
