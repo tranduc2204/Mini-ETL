@@ -1,0 +1,4 @@
+log_id,operation_type,changed_at,order_id,user_id,status,total_amount,updated_at
+81,UPDATE,2026-05-19 15:23:41.055486,44,104,Completed,2242.0,2026-05-19 15:24:30.000309
+82,UPDATE,2026-05-19 15:24:24.174768,41,101,Pending,224.0,2026-05-19 15:24:24.174768
+83,UPDATE,2026-05-19 15:24:30.000309,44,104,Completed,2242.0,2026-05-19 15:24:30.000309

@@ -20,6 +20,8 @@ VALUES
 (108, 'Returned',  145.30, '2026-05-14 18:00:00'),
 (109, 'Completed', 720.15, '2026-05-15 19:35:00');
 
+select *
+from orders
 
 CREATE TABLE pipeline_state (
     pipeline_name VARCHAR PRIMARY KEY,
@@ -171,4 +173,8 @@ where pipeline_name = 'orders_cdc'
 delete from orders_cdc_log 
 delete from pipeline_state 
 delete from processed_files 
+
+------------------------------------------------- check business rule
+
+
 

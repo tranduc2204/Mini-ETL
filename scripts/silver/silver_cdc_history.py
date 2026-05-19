@@ -33,7 +33,7 @@ def process_bronze_to_silver():
         return 
     else:   
         silver_path = "./data/silver/orders_silver.csv"
-
+        
         df_list = [pd.read_csv(file) for file in new_file]
 
      
@@ -41,9 +41,7 @@ def process_bronze_to_silver():
 
         bronze_df = pd.concat(df_list, ignore_index=True)
 
-       
-        
-        
+  
         if os.path.exists(silver_path):
             df_silver_old = pd.read_csv(silver_path)
         else:
@@ -51,9 +49,9 @@ def process_bronze_to_silver():
         
         # df_silver_new = pd.concat([df_silver_old, df], ignore_index=True)
         df_silver_new = (
-            pd.concat([df_silver_old, bronze_df], ignore_index=True)
+            pd.concat([df_silver_old, bronze_df], ignore_index=True) #
             .sort_values("changed_at")
-            .drop_duplicates(subset=["order_id"], keep="last")
+            # .drop_duplicates(subset=["order_id"], keep="last")
         )
 
         df_silver_new.to_csv("./data/silver/orders_silver.csv", index=False)
@@ -62,6 +60,7 @@ def process_bronze_to_silver():
         print(f"Found {len(new_file)} new files")
         print(f"Silver rows: {len(df_silver_new)}")
 
+        print (df_silver_new)
          
         with engine.connect() as conn:
         
