@@ -10,6 +10,7 @@ AIRFLOW_HOME = Path ("/opt/airflow")
 if str(AIRFLOW_HOME) not in sys.path:
     sys.path.append(str(AIRFLOW_HOME))
 
+from plugins.operators.postgres_operator import CreateSchemaOperator
 from scripts.bronze.bronze_extract import bronze_extract
 
 
@@ -33,8 +34,37 @@ with DAG(
         python_callable=bronze_extract,
     )
 
+    create_schema = CreateSchemaOperator(
+        task_id = "create_schema",
+        postgres_conn_id = "postgres_conn_id",
+        layer_name = "bronze"
+    )
 
+    create_schema >> bronze
 
+    #  create_bronze = CreateSchemaOperator(
+    #     task_id="create_bronze_schema",
+    #     postgres_conn_id="postgres_default",
+    #     layer_name="bronze"
+    # )
+
+    # create_silver = CreateSchemaOperator(
+    #     task_id="create_silver_schema",
+    #     postgres_conn_id="postgres_default",
+    #     layer_name="silver"
+    # )
+
+    # create_gold = CreateSchemaOperator(
+    #     task_id="create_gold_schema",
+    #     postgres_conn_id="postgres_default",
+    #     layer_name="gold"
+    # )
+
+    # (
+    #     create_bronze
+    #     >> create_silver
+    #     >> create_gold
+    # )
 
 
 

@@ -4,8 +4,6 @@ import os
 
 
 
-
-
 def silver_orders():
 
     path = './data/silver/orders_silver.csv'
@@ -49,29 +47,39 @@ def silver_orders():
         df_latest["operation_type"] != "DELETE"
     ]
 
-    print (f_latest)
-    return
-    print (f_latest)
+    f_latest["rank"] = f_latest.groupby("order_id")["changed_at"]\
+        .rank(method="dense", ascending=False)  
+
+    f_latest = f_latest[f_latest["rank"] == 1]
+    
+   
     #nếu không có giá trị của cột update at thì lấy giá trị của cột changed_at
-    df_result["date"] = df_result["updated_at"].fillna(df_result["changed_at"])
+    f_latest["date"] = f_latest["updated_at"].fillna(f_latest["changed_at"])
 
     # check senario in the dataframe have 2 record with the same ID. we will keep  the record with the latest date
     # df_result = df_result.drop_duplicates(subset=["order_id"], keep="last")
 
     # check total amount must be greater than 0
-    df_result = df_result[df_result["total_amount"] > 0]
-    # df_result = df_result.dropna()
+    f_latest = f_latest[f_latest["total_amount"] > 0]
+    # f_latest = f_latest.dropna()
 
     datetime_cols = ["updated_at", "changed_at", "date"]
 
     for col in datetime_cols:
         # df_result[col] = pd.to_datetime(df_result[col]).dt.strftime("%d-%m-%Y %H:%M:%S")
-        df_result[col] = pd.to_datetime(
-            df_result[col],
+        f_latest[col] = pd.to_datetime(
+            f_latest[col],
             format="mixed"
         ).dt.strftime("%d-%m-%Y")
 
-    print (df_result)
+    f_latest = f_latest[["order_id", "user_id", "status", "total_amount", "date"]]
+
+    
+    f_latest.to_csv(
+        "./data/gold/gold_orders.csv",
+        index=False
+    )
+    print (f_latest)
 
 if __name__ == "__main__":  
     silver_orders()

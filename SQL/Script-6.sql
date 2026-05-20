@@ -173,8 +173,24 @@ where pipeline_name = 'orders_cdc'
 delete from orders_cdc_log 
 delete from pipeline_state 
 delete from processed_files 
+delete from ordeRS 
+------------------------------------------------- check business rule-----------------------------
+select *
+from ordeRS
 
-------------------------------------------------- check business rule
+
+
+update orders 
+set total_amount = 2002
+where order_id = 44
+
+
+select *
+from orders_cdc_log
+
+
+select *
+from processed_files  
 
 
 
