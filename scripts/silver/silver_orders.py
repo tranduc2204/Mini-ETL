@@ -28,9 +28,9 @@ def silver_orders():
         
 
     
-    df_result = df_silver[["order_id", "user_id", "status", "total_amount", "updated_at", "log_id", "changed_at","operation_type"]]
+    # df_result = df_silver[["order_id", "user_id", "status", "total_amount", "updated_at", "log_id", "changed_at","operation_type"]]
 
-
+    
     # business rule INSERT | UPDATE | DELETE
 
     df_silver = df_silver.sort_values(
@@ -43,12 +43,16 @@ def silver_orders():
         .drop_duplicates(subset=["order_id","operation_type"], keep="last")
     )
 
+
+
     f_latest = df_latest[
         df_latest["operation_type"] != "DELETE"
     ]
 
     f_latest["rank"] = f_latest.groupby("order_id")["changed_at"]\
         .rank(method="dense", ascending=False)  
+    
+     
 
     f_latest = f_latest[f_latest["rank"] == 1]
     

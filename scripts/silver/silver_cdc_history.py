@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 import os
 from sqlalchemy import text
 
-
+SILVE_PATH = os.getenv("SILVER_PATH")
 
 def process_bronze_to_silver():
     # list all file in the bronze folder
@@ -32,7 +32,7 @@ def process_bronze_to_silver():
         print ("No new file to process")
         return 
     else:   
-        silver_path = "./data/silver/orders_silver.csv"
+        # silver_path = "./data/silver/orders_silver.csv"
         
         df_list = [pd.read_csv(file) for file in new_file]
 
@@ -42,19 +42,24 @@ def process_bronze_to_silver():
         bronze_df = pd.concat(df_list, ignore_index=True)
 
   
-        if os.path.exists(silver_path):
-            df_silver_old = pd.read_csv(silver_path)
+        if os.path.exists(SILVE_PATH):
+            df_silver_old = pd.read_csv(SILVE_PATH)
         else:
             df_silver_old = pd.DataFrame()
         
-        # df_silver_new = pd.concat([df_silver_old, df], ignore_index=True)
+      
+        # df_silver_new = (
+        #     pd.concat([df_silver_old, bronze_df], ignore_index=True) #
+        #     .sort_values("changed_at")
+          
+        # )
         df_silver_new = (
-            pd.concat([df_silver_old, bronze_df], ignore_index=True) #
+            pd.concat([df_silver_old, bronze_df])
             .sort_values("changed_at")
-            # .drop_duplicates(subset=["order_id"], keep="last")
+            .drop_duplicates(subset=["order_id"], keep="last")
         )
 
-        df_silver_new.to_csv("./data/silver/orders_silver.csv", index=False)
+        df_silver_new.to_csv(SILVE_PATH, index=False)
        
        
         print(f"Found {len(new_file)} new files")
@@ -83,7 +88,7 @@ def process_bronze_to_silver():
                         "processed_at": datetime.now()
                     }
                 ) 
-                conn.commit()
+            conn.commit()
         print ("processed done")
 
 if __name__ == "__main__":              

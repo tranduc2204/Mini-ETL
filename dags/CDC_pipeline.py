@@ -10,8 +10,10 @@ AIRFLOW_HOME = Path ("/opt/airflow")
 if str(AIRFLOW_HOME) not in sys.path:
     sys.path.append(str(AIRFLOW_HOME))
 
-from plugins.operators.postgres_operator import CreateSchemaOperator
+from plugins.operators.create_schema_operator import CreateSchemaOperator
 from scripts.bronze.bronze_extract import bronze_extract
+from scripts.silver.silver_cdc_history import process_bronze_to_silver
+from    scripts.silver.silver_orders import silver_orders   
 
 
 default_args = {
@@ -34,43 +36,17 @@ with DAG(
         python_callable=bronze_extract,
     )
 
-    create_schema = CreateSchemaOperator(
-        task_id = "create_schema",
-        postgres_conn_id = "postgres_conn_id",
-        layer_name = "bronze"
+    silver = PythonOperator(
+        task_id="silver_process",
+        python_callable=process_bronze_to_silver,
     )
+    silver_end = PythonOperator(
+        task_id="silver_end",
+        python_callable=silver_orders,
+    )       
 
-    create_schema >> bronze
-
-    #  create_bronze = CreateSchemaOperator(
-    #     task_id="create_bronze_schema",
-    #     postgres_conn_id="postgres_default",
-    #     layer_name="bronze"
-    # )
-
-    # create_silver = CreateSchemaOperator(
-    #     task_id="create_silver_schema",
-    #     postgres_conn_id="postgres_default",
-    #     layer_name="silver"
-    # )
-
-    # create_gold = CreateSchemaOperator(
-    #     task_id="create_gold_schema",
-    #     postgres_conn_id="postgres_default",
-    #     layer_name="gold"
-    # )
-
-    # (
-    #     create_bronze
-    #     >> create_silver
-    #     >> create_gold
-    # )
-
-
-
-
-
-
+    bronze >> silver >> silver_end
+   
 
 
 

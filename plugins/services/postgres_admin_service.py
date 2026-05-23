@@ -14,14 +14,23 @@ class PostgresAdminService:
             postgres_conn_id=postgres_conn_id
         )
 
-    def setup_bronze_layer(self):
+    def create_database(self, database_name):
+        
+        self.hook.crseate_database(database_name)
 
-        self.hook.create_schema("bronze")
+    def create_schema(self, schema_name):
+        # self.hook.create_database()
+        self.hook.create_schema(schema_name) # para is info schema name
 
-    def setup_silver_layer(self):
+    
+    # def setup_silver_layer(self):
 
-        self.hook.create_schema("silver")
+    #     self.hook.create_schema("silver")
 
-    def setup_gold_layer(self):
+    # def setup_gold_layer(self):
 
-        self.hook.create_schema("gold")
+    #     self.hook.create_schema("gold")
+
+    def create_table(self, schema_name, table_name, columns):
+
+        self.hook.create_table(schema_name, table_name, columns) 
